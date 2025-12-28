@@ -1,0 +1,359 @@
+:root{
+  --ink:#1f3b57;
+  --muted:rgba(31,59,87,.70);
+
+  --boardEdge: rgba(33,110,148,.55);
+  --line: rgba(21,77,109,.55);
+  --lineSoft: rgba(21,77,109,.30);
+
+  --shadow: rgba(0,0,0,.12);
+  --radius: 22px;
+
+  /* feel seperti referensi */
+  --tilePad: clamp(8px, 1.6vw, 12px);
+
+  /* ukuran teks (dibikin “proporsional feel”) */
+  --daySize: clamp(14px, 2.2vw, 22px);     /* ~30% feel dari kotak */
+  --shiftSize: clamp(13px, 2.8vw, 30px);   /* ~40% feel dari kotak */
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans";
+  color:var(--ink);
+  background:
+    radial-gradient(1200px 650px at 15% 12%, rgba(255,255,255,.55), rgba(255,255,255,0) 65%),
+    radial-gradient(900px 520px at 85% 35%, rgba(255,255,255,.35), rgba(255,255,255,0) 70%),
+    linear-gradient(180deg, #aee3fb, #93d3f3);
+  overflow-x:hidden;
+}
+
+/* bubble background */
+.bg-bubbles{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(255,255,255,.35) 0 28px, rgba(255,255,255,0) 29px),
+    radial-gradient(circle at 82% 14%, rgba(255,255,255,.22) 0 44px, rgba(255,255,255,0) 45px),
+    radial-gradient(circle at 74% 74%, rgba(255,255,255,.18) 0 34px, rgba(255,255,255,0) 35px),
+    radial-gradient(circle at 8% 72%, rgba(255,255,255,.18) 0 20px, rgba(255,255,255,0) 21px),
+    radial-gradient(circle at 44% 88%, rgba(255,255,255,.15) 0 18px, rgba(255,255,255,0) 19px);
+  opacity:.95;
+}
+
+.wrap{
+  max-width: 980px;
+  margin: 0 auto;
+  padding: clamp(14px, 3vw, 26px);
+  padding-bottom: 140px;
+}
+
+/* ===== header ala referensi ===== */
+.refHeader{
+  display:grid;
+  grid-template-columns: auto 1fr auto;
+  align-items:center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.refMonthJp{
+  font-weight: 900;
+  font-size: clamp(34px, 5vw, 56px);
+  letter-spacing: .5px;
+  line-height: 1;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.55);
+  border: 1px solid rgba(31,59,87,.16);
+  box-shadow: 0 12px 34px var(--shadow);
+  backdrop-filter: blur(10px);
+}
+
+.refMonthId{
+  font-weight: 900;
+  color: rgba(31,59,87,.82);
+  font-size: clamp(16px, 2.3vw, 28px);
+  white-space: nowrap;
+}
+
+.refTitleWrap{
+  min-width: 0;
+  display:flex;
+  align-items:flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.refTitle{
+  margin:0;
+  font-weight: 900;
+  letter-spacing: .6px;
+  font-size: clamp(22px, 3.2vw, 38px);
+}
+
+.refControls{
+  display:flex;
+  gap: 8px;
+}
+
+.btnIcon{
+  appearance:none;
+  border: 1px solid rgba(31,59,87,.16);
+  background: rgba(255,255,255,.55);
+  color: var(--ink);
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(0,0,0,.08);
+  transition: transform 120ms ease, background 120ms ease;
+}
+.btnIcon:hover{ transform: translateY(-1px); background: rgba(255,255,255,.70); }
+.btnIcon:active{ transform: translateY(0px); }
+
+/* ===== board ===== */
+.board{
+  position:relative;
+  border-radius: var(--radius);
+  background: rgba(255,255,255,.22);
+  border: 1px solid rgba(31,59,87,.14);
+  box-shadow: 0 24px 70px rgba(0,0,0,.14);
+  padding: clamp(14px, 2.4vw, 18px);
+  backdrop-filter: blur(10px);
+}
+
+.board::before{
+  content:"";
+  position:absolute;
+  inset: 10px;
+  border-radius: calc(var(--radius) - 10px);
+  background:
+    radial-gradient(700px 220px at 20% 22%, rgba(255,255,255,.42), rgba(255,255,255,0) 60%),
+    radial-gradient(820px 260px at 78% 70%, rgba(255,255,255,.25), rgba(255,255,255,0) 65%),
+    rgba(171,231,255,.22);
+  border: 2px solid var(--boardEdge);
+  pointer-events:none;
+}
+
+/* DOW + GRID must align */
+.dow, .grid{
+  position:relative;
+  z-index:1;
+  display:grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap:0;
+  overflow:hidden;
+}
+
+.dow{
+  border-radius: calc(var(--radius) - 10px);
+  border: 2px solid var(--boardEdge);
+  border-bottom:none;
+}
+
+.dowCell{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height: 44px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  background: rgba(220,248,255,.55);
+  border-right: 1px solid var(--line);
+}
+.dowCell:last-child{ border-right:none; }
+
+.grid{
+  border-radius: 0 0 calc(var(--radius) - 10px) calc(var(--radius) - 10px);
+  border: 2px solid var(--boardEdge);
+  border-top:none;
+}
+
+/* ===== CELLS: SQUARE 1:1 (no stretch) ===== */
+.cell{
+  position:relative;
+  aspect-ratio: 1 / 1;         /* <--- ini kuncinya */
+  padding: var(--tilePad);
+  background: rgba(205,246,255,.26);
+  border-right: 1px solid var(--lineSoft);
+  border-bottom: 1px solid var(--lineSoft);
+  overflow:hidden;
+}
+.cell:nth-child(7n){ border-right:none; }
+.cell.is-out{
+  background: rgba(205,246,255,.12);
+}
+
+/* tanggal kiri-atas */
+.day{
+  position:absolute;
+  top: var(--tilePad);
+  left: var(--tilePad);
+  font-weight: 900;
+  font-size: var(--daySize);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  z-index: 3;
+}
+
+/* shift text CENTER */
+.shift{
+  position:absolute;
+  inset: 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding: calc(var(--tilePad) * 2);
+  font-weight: 900;
+  font-size: var(--shiftSize);
+  line-height: 1.05;
+  color: rgba(31,59,87,.92);
+  z-index: 2;
+}
+
+/* Yasumi chibi (30% of box) */
+.cell.rest .restChibi{
+  position:absolute;
+  right: var(--tilePad);
+  bottom: var(--tilePad);
+  width: 40%;
+  height: auto;
+  opacity: .95;
+  pointer-events:none;
+  filter: drop-shadow(0 10px 16px rgba(0,0,0,.12));
+  z-index: 1;
+}
+
+/* mascot kanan bawah board */
+.mascot{
+  position:absolute;
+  right: clamp(10px, 2vw, 18px);
+  bottom: clamp(10px, 2vw, 18px);
+  width: clamp(92px, 16vw, 190px);
+  height:auto;
+  opacity:.96;
+  filter: drop-shadow(0 18px 26px rgba(0,0,0,.18));
+  pointer-events:none;
+}
+
+/* cute slime kiri bawah */
+.cute{
+  position:fixed;
+  left: 14px;
+  bottom: 12px;
+  width: 300px;      /* desktop */
+  height:auto;
+  opacity: .85;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,.18));
+  pointer-events:none;
+}
+
+/* ===== Mobile ===== */
+/* ===== Android / Mobile ===== */
+@media (max-width: 720px){
+  :root{
+    /* font diperkecil biar gak “strect” dan gak kepotong */
+    --daySize: 13px;
+    --shiftSize: 12px;
+    --tilePad: 8px;
+  }
+
+  .wrap{
+    padding: 12px;
+    padding-bottom: 120px;
+  }
+
+  /* header biar rapi dan gak makan tempat */
+  .refHeader{
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "jp id"
+      "title title";
+    row-gap: 10px;
+  }
+  .refMonthJp{ grid-area: jp; padding: 8px 12px; border-radius: 14px; }
+  .refMonthId{ grid-area: id; justify-self:end; font-size: 16px; }
+  .refTitleWrap{ grid-area: title; align-items:center; }
+  .refTitle{ font-size: 22px; }
+
+  .btnIcon{
+    width: 38px;
+    height: 38px;
+  }
+
+  .dowCell{
+    height: 36px;
+    font-size: 15px;
+  }
+
+  /* shift text center lebih “compact” */
+  .shift{
+    padding: 18px 10px;
+    line-height: 1.05;
+  }
+
+  /* chibi di yasumi tetap 30% tapi biar gak ngeganggu */
+  .cell.rest .restChibi{
+    width: 40%;
+    opacity: .92;
+  }
+
+  /* cute slime jadi kecil + bounce (rimuru loncat2) */
+  .cute{
+    width: 110px;
+    left: 10px;
+    bottom: 10px;
+    opacity: .9;
+    animation: rimuruBounce 1.25s ease-in-out infinite;
+    transform-origin: 50% 100%;
+  }
+
+  /* board biar full lebar tapi tetep enak */
+  .board{
+    padding: 12px;
+  }
+
+  .board::before{
+    inset: 8px;
+  }
+}
+
+@media (max-width: 420px){
+  :root{
+    --daySize: 12px;
+    --shiftSize: 11px;
+    --tilePad: 7px;
+  }
+
+  .refTitle{ font-size: 20px; }
+  .refMonthId{ font-size: 14px; }
+
+  .cute{
+    width: 95px;
+    animation-duration: 1.15s; /* lebih cepet dikit biar cute */
+  }
+
+  .dowCell{
+    height: 34px;
+    font-size: 12px;
+  }
+
+  .shift{
+    padding: 16px 8px;
+  }
+}
+
+/* rimuru loncat-loncat */
+@keyframes rimuruBounce{
+  0%, 100% { transform: translateY(0) scale(1); }
+  45%      { transform: translateY(-10px) scale(1.02); }
+  70%      { transform: translateY(0) scale(0.98); }
+}
