@@ -10,11 +10,6 @@ Ini website statik (HTML/CSS/JS) buat nampilin jadwal bulanan dari Google Sheets
    - Folder: `/ (root)`
 3) Tunggu halaman aktif. Buka URL GitHub Pages-nya.
 
-## Biar bisa ngeload dari Google Sheets
-Website ini ngambil data dari sheet:
-- Sheet ID: `1EuA-dVoTwLeMGBKTfdTxgWvs_d-s0kmabgFlfyI71pw`
-- GID: `0`
-
 Supaya bisa di-fetch dari browser:
 1) Google Sheets → tombol **Share**
 2) Ubah akses jadi **Anyone with the link → Viewer** (public view)
